@@ -14,6 +14,7 @@ jobs:
   # STABLE
   # ============================================================
   update-stable:
+    if: github.repository == 'Spegeli/homeassistant-app-bambuddy'
     name: Update STABLE
     runs-on: ubuntu-latest
     concurrency:
@@ -91,6 +92,7 @@ jobs:
   # BETA
   # ============================================================
   update-beta:
+    if: github.repository == 'Spegeli/homeassistant-app-bambuddy'
     name: Update BETA
     runs-on: ubuntu-latest
     concurrency:
@@ -168,6 +170,7 @@ jobs:
   # DAILY
   # ============================================================
   update-daily:
+    if: github.repository == 'Spegeli/homeassistant-app-bambuddy'
     name: Update DAILY
     runs-on: ubuntu-latest
     concurrency:
