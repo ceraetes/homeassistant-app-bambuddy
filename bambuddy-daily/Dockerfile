@@ -1,10 +1,11 @@
 # https://developers.home-assistant.io/docs/add-ons/configuration#add-on-dockerfile
-FROM ghcr.io/maziggy/bambuddy:daily AS builder
+# FROM ghcr.io/maziggy/bambuddy:daily AS builder
+FROM ghcr.io/ceraetes/bambuddy:dev AS builder
 FROM ghcr.io/home-assistant/base-python:3.14-alpine3.23
 
 LABEL org.opencontainers.image.title="Home Assistant Add-on: Bambuddy add-on (DAILY)"
 LABEL org.opencontainers.image.description="A powerful, self-hosted command center for Bambu Lab — from one A1 to a 40-printer farm. Your Printers. No Cloud. Your Rules."
-LABEL org.opencontainers.image.source="https://github.com/Spegeli/homeassistant-app-bambuddy"
+LABEL org.opencontainers.image.source="https://github.com/ceraetes/homeassistant-app-bambuddy"
 LABEL org.opencontainers.image.licenses="MIT License"
 
 WORKDIR /app
