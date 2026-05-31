@@ -29,16 +29,18 @@ jobs:
 
       - name: Get dev image digest
         id: digest
+        env:
+          DISPATCH_DIGEST: ${{ github.event.client_payload.digest }}
         run: |
-          TOKEN=$(curl -s "https://ghcr.io/token?scope=repository:ceraetes/bambuddy:pull" \
-            | jq -r '.token')
-          DIGEST=$(curl -sI -H "Authorization: Bearer $TOKEN" \
-            -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-            -H "Accept: application/vnd.docker.distribution.manifest.list.v2+json" \
-            "https://ghcr.io/v2/ceraetes/bambuddy/manifests/dev" \
-            | grep -i "docker-content-digest" | tr -d '\r' | awk '{print $2}')
-          if [ -z "$DIGEST" ]; then
-            echo "ERROR: Could not fetch ceraetes/bambuddy:dev digest (is the image public?)"
+          if [ -n "$DISPATCH_DIGEST" ] && [ "$DISPATCH_DIGEST" != "null" ]; then
+            DIGEST="$DISPATCH_DIGEST"
+            echo "Using digest from repository_dispatch payload"
+          else
+            echo "Resolving digest via buildx imagetools inspect..."
+            DIGEST=$(docker buildx imagetools inspect ghcr.io/ceraetes/bambuddy:dev --format '{{.Manifest.Digest}}')
+          fi
+          if [ -z "$DIGEST" ] || [ "$DIGEST" = "null" ]; then
+            echo "ERROR: Could not resolve ceraetes/bambuddy:dev digest"
             exit 1
           fi
           SHORT=$(echo "$DIGEST" | cut -c8-15)
