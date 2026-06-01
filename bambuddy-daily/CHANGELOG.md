@@ -1,4 +1,4 @@
-## 0.2.5b1-dev.20260531.86963e6a
+## 0.2.5b1-dev.20260601.25570851
 
 > [!NOTE]
 > This is a **daily beta build** (2026-05-30). It contains the latest fixes and improvements but may have undiscovered issues.
