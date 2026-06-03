@@ -81,15 +81,26 @@ jobs:
       - name: Get changelog body
         id: changelog
         run: |
-          RELEASE_JSON=$(curl -s "https://api.github.com/repos/maziggy/bambuddy/releases?per_page=10" \
-            | jq '[.[] | select(.prerelease == true)] | first')
-          BODY=$(echo "$RELEASE_JSON" | jq -r '.body // empty')
-          if [ -z "$BODY" ] || [ "$BODY" = "null" ]; then
-            BODY="Dev image \`${{ steps.digest.outputs.digest }}\` built from [ceraetes/bambuddy](https://github.com/ceraetes/bambuddy) \`dev\` @ \`${{ github.event.client_payload.ref || 'see Actions' }}\`."
+          set -euo pipefail
+          REF="${{ github.event.client_payload.ref || 'see Actions' }}"
+          BODY="Dev image \`${{ steps.digest.outputs.digest }}\` built from [ceraetes/bambuddy](https://github.com/ceraetes/bambuddy) \`dev\` @ \`${REF}\`."
+
+          RELEASES=$(curl -fsSL "https://api.github.com/repos/maziggy/bambuddy/releases?per_page=5" || echo '[]')
+          if echo "$RELEASES" | jq -e 'type == "array"' >/dev/null 2>&1; then
+            TAG=$(echo "$RELEASES" | jq -r '[.[] | select(.prerelease == true)] | first | .tag_name // empty')
+            if [ -n "$TAG" ]; then
+              BODY="${BODY}
+
+Upstream daily prerelease base: [\`${TAG}\`](https://github.com/maziggy/bambuddy/releases/tag/${TAG}) (full notes not copied — see upstream release)."
+            fi
           fi
-          echo "body<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$BODY" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+
+          DELIM="changelog_body_$(openssl rand -hex 8)"
+          {
+            echo "body<<${DELIM}"
+            printf '%s\n' "$BODY"
+            echo "${DELIM}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Update config.yaml
         if: steps.new_version.outputs.version != steps.current.outputs.version
