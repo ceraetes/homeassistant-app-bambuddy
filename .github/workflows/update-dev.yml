@@ -89,9 +89,7 @@ jobs:
           if echo "$RELEASES" | jq -e 'type == "array"' >/dev/null 2>&1; then
             TAG=$(echo "$RELEASES" | jq -r '[.[] | select(.prerelease == true)] | first | .tag_name // empty')
             if [ -n "$TAG" ]; then
-              BODY="${BODY}
-
-Upstream daily prerelease base: [\`${TAG}\`](https://github.com/maziggy/bambuddy/releases/tag/${TAG}) (full notes not copied — see upstream release)."
+              BODY=$(printf '%s\n\nUpstream daily prerelease base: [`%s`](https://github.com/maziggy/bambuddy/releases/tag/%s) (full notes not copied — see upstream release).' "$BODY" "$TAG" "$TAG")
             fi
           fi
 
