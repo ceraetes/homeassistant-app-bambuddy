@@ -1,4 +1,4 @@
-## 0.2.5b1-dev.20260608.051142b8
+## 0.2.5b1-dev.20260609.051142b8
 
 Dev image `sha256:051142b85a1fd48e7a632e16bde36c51f3463ea74dbdd374247de32dd152ae85` built from [ceraetes/bambuddy](https://github.com/ceraetes/bambuddy) `dev` @ `see Actions`.
 
